@@ -60,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Text('${article.kids.length} comments'),
+              Text('${article.descendants} comments'),
               IconButton(
                 icon: Icon(Icons.launch, semanticLabel: "Open"),
                 onPressed: () async {
