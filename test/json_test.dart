@@ -1,5 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:boring_flutter_dev/json_parsing.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert' as json;
 
 void main() {
   test("Parse HN Top Stories JSON", () {
@@ -17,5 +19,20 @@ void main() {
 
     expect(parseArticle(json).by, "pcr910303");
 
+  });
+
+  test("Parse JSON from network call to HN API", () async {
+    final url = 'https://hacker-news.firebaseio.com/v0/topstories.json';
+    final response = await http.get(url);
+    if(response.statusCode == 200) {
+      final itemIds = json.jsonDecode(response.body);
+      if(itemIds.isNotEmpty) {
+        final storyUrl = 'https://hacker-news.firebaseio.com/v0/item/${itemIds.first}.json';
+        final storyResponse = await http.get(storyUrl);
+        if(storyResponse.statusCode == 200) {
+          expect(parseArticle(storyResponse.body).by, "pcr910303");
+        }
+      }
+    }
   });
 }
