@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'json_parsing.dart';
+part of 'articles.dart';
 
 // **************************************************************************
 // BuiltValueGenerator
@@ -38,10 +38,13 @@ class _$ArticleSerializer implements StructuredSerializer<Article> {
           specifiedType: const FullType(String)),
       'type',
       serializers.serialize(object.type, specifiedType: const FullType(String)),
-      'url',
-      serializers.serialize(object.url, specifiedType: const FullType(String)),
     ];
-
+    if (object.url != null) {
+      result
+        ..add('url')
+        ..add(serializers.serialize(object.url,
+            specifiedType: const FullType(String)));
+    }
     return result;
   }
 
@@ -158,9 +161,6 @@ class _$Article extends Article {
     }
     if (type == null) {
       throw new BuiltValueNullFieldError('Article', 'type');
-    }
-    if (url == null) {
-      throw new BuiltValueNullFieldError('Article', 'url');
     }
   }
 

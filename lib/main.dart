@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'src/articles.dart';
+import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 void main() => runApp(MyApp());
@@ -27,7 +28,28 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<Article> _articles = articles;
+//  List<Article> _articles = []; //articles;
+  List<int> _storyIds = [
+    22867627,
+    22871331,
+    22869909,
+    22871180,
+    22872301,
+    22865357,
+    22867960,
+    22863491,
+    22870105,
+    22870905,
+  ];
+
+  Future<Article> _getArticle(int storyId) async {
+    final storyUrl = 'https://hacker-news.firebaseio.com/v0/item/$storyId.json';
+    final storyResponse = await http.get(storyUrl);
+    if(storyResponse.statusCode == 200) {
+      return parseArticle(storyResponse.body);
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -35,17 +57,19 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await Future.delayed(const Duration(seconds: 1));
-          setState(() {
-            _articles.insert(_articles.length, _articles.first);
-            _articles.removeAt(0);
-          });
-        },
-        child: ListView(
-          children: _articles.map(_buildItem).toList(),
-        ),
+      body: ListView(
+        children: _storyIds.map((id) =>
+            FutureBuilder<Article>(
+              future: _getArticle(id),
+              builder: (BuildContext context, AsyncSnapshot<Article> snapshot) {
+                if(snapshot.connectionState == ConnectionState.done) {
+                  return _buildItem(snapshot.data);
+                } else {
+                  return Center(child: CircularProgressIndicator());
+                }
+              },
+            )
+        ).toList(),
       ),
     );
   }
@@ -64,11 +88,10 @@ class _MyHomePageState extends State<MyHomePage> {
               IconButton(
                 icon: Icon(Icons.launch, semanticLabel: "Open"),
                 onPressed: () async {
-                  final url = article.url;
-                  if (await canLaunch(url)) {
-                    await launch(url);
+                  if (await canLaunch(article.url)) {
+                    await launch(article.url);
                   } else {
-                    throw "Could not launch $url";
+                    throw "Could not launch ${article.url}";
                   }
                 },
               )
