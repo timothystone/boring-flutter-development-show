@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(
-        title: 'Flutter Demo Home Page',
+        title: 'Boring Hacker News',
         newsBloc: newsBloc,
       ),
     );
@@ -56,6 +56,17 @@ class _MyHomePageState extends State<MyHomePage> {
           children: snapshot.data.map(_buildItem).toList(),
         ),
       ),
+      bottomNavigationBar: BottomNavigationBar(currentIndex: 1, items: [
+        BottomNavigationBarItem(title: Text("Top Stories"), icon: Icon(Icons.arrow_upward)),
+        BottomNavigationBarItem(title: Text("New Stories"), icon: Icon(Icons.new_releases)),
+      ],
+      onTap: (index) {
+        if( index == 0 ) {
+          widget.newsBloc.storiesType.add(StoriesType.topStories);
+        } else {
+          widget.newsBloc.storiesType.add(StoriesType.newStories);
+        }
+      }),
     );
   }
 
