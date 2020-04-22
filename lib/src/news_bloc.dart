@@ -41,7 +41,7 @@ class NewsBloc {
     _getArticlesAndUpdate(_topIds);
 
     _storiesTypeController.stream.listen((storiesType) {
-      if(storiesType == StoriesType.newStories) {
+      if (storiesType == StoriesType.newStories) {
         _getArticlesAndUpdate(_newIds);
       } else {
         _getArticlesAndUpdate(_topIds);
@@ -51,10 +51,9 @@ class NewsBloc {
 
   _getArticlesAndUpdate(List<int> ids) async {
     _isLoadingSubject.add(true);
-    _updateArticles(ids).then((_) {
-      _articlesSubject.add(UnmodifiableListView(_articles));
-      _isLoadingSubject.add(false);
-    });
+    await _updateArticles(ids);
+    _articlesSubject.add(UnmodifiableListView(_articles));
+    _isLoadingSubject.add(false);
   }
 
   Stream<UnmodifiableListView<Article>> get articles => _articlesSubject.stream;
